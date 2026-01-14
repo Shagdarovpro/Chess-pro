@@ -19,7 +19,7 @@
 
 | Игровое поле | Индикатор хода |
 | :---: | :---: |
-| <img src="screenshots/main_screen.png" width="300"> | <img src="screenshots/turn_indicator.png" width="300"> |
+| <img src="screenshots/game_screen.png" width="300"> | <img src="screenshots/move_indicator.png" width="300"> |
 
 *(Примечание: добавьте скриншоты в папку screenshots в корне проекта)*
 
