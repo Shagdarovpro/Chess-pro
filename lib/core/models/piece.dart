@@ -1,4 +1,5 @@
 enum PieceType { pawn, knight, bishop, rook, queen, king }
+
 enum Side { white, black }
 
 class ChessPiece {

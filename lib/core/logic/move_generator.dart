@@ -31,12 +31,31 @@ class MoveGenerator {
     final Side side = piece.side;
 
     return switch (piece.type) {
-      PieceType.pawn   => _getPawnMoves(x, y, side, board),
+      PieceType.pawn => _getPawnMoves(x, y, side, board),
       PieceType.knight => _getKnightMoves(x, y, side, board),
-      PieceType.bishop => _getSlidingMoves(x, y, side, board, [[-1, -1], [-1, 1], [1, -1], [1, 1]]),
-      PieceType.rook   => _getSlidingMoves(x, y, side, board, [[0, 1], [0, -1], [1, 0], [-1, 0]]),
-      PieceType.queen  => _getSlidingMoves(x, y, side, board, [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]]),
-      PieceType.king   => _getKingMoves(x, y, side, board),
+      PieceType.bishop => _getSlidingMoves(x, y, side, board, [
+        [-1, -1],
+        [-1, 1],
+        [1, -1],
+        [1, 1],
+      ]),
+      PieceType.rook => _getSlidingMoves(x, y, side, board, [
+        [0, 1],
+        [0, -1],
+        [1, 0],
+        [-1, 0],
+      ]),
+      PieceType.queen => _getSlidingMoves(x, y, side, board, [
+        [0, 1],
+        [0, -1],
+        [1, 0],
+        [-1, 0],
+        [-1, -1],
+        [-1, 1],
+        [1, -1],
+        [1, 1],
+      ]),
+      PieceType.king => _getKingMoves(x, y, side, board),
     };
   }
 
@@ -44,7 +63,7 @@ class MoveGenerator {
 
   static bool _isKingUnderAttackAfterMove(int from, int to, ChessBoard board) {
     final side = board.squares[from]!.side;
-    
+
     // Создаем временную копию доски для симуляции хода
     List<ChessPiece?> tempSquares = List.from(board.squares);
     tempSquares[to] = tempSquares[from];
@@ -61,7 +80,9 @@ class MoveGenerator {
       }
     }
 
-    if (kingIndex == -1) return false; // Король уже съеден (в нормальной игре не бывает)
+    if (kingIndex == -1) {
+      return false; // Король уже съеден (в нормальной игре не бывает)
+    }
 
     // Проверяем, может ли любая фигура противника ударить по клетке короля
     final opponentSide = (side == Side.white) ? Side.black : Side.white;
@@ -79,7 +100,13 @@ class MoveGenerator {
 
   // --- ЛОГИКА ФИГУР ---
 
-  static List<int> _getSlidingMoves(int x, int y, Side side, ChessBoard board, List<List<int>> dirs) {
+  static List<int> _getSlidingMoves(
+    int x,
+    int y,
+    Side side,
+    ChessBoard board,
+    List<List<int>> dirs,
+  ) {
     List<int> moves = [];
     for (var d in dirs) {
       int nx = x + d[0], ny = y + d[1];
@@ -91,7 +118,8 @@ class MoveGenerator {
           if (t.side != side) moves.add(ny * 8 + nx);
           break;
         }
-        nx += d[0]; ny += d[1];
+        nx += d[0];
+        ny += d[1];
       }
     }
     return moves;
@@ -102,8 +130,11 @@ class MoveGenerator {
     int dir = (side == Side.white) ? -1 : 1;
     if (board.isOnBoard(x, y + dir) && board.getPieceAt(x, y + dir) == null) {
       moves.add((y + dir) * 8 + x);
-      bool isStart = (side == Side.white && y == 6) || (side == Side.black && y == 1);
-      if (isStart && board.getPieceAt(x, y + 2 * dir) == null) moves.add((y + 2 * dir) * 8 + x);
+      bool isStart =
+          (side == Side.white && y == 6) || (side == Side.black && y == 1);
+      if (isStart && board.getPieceAt(x, y + 2 * dir) == null) {
+        moves.add((y + 2 * dir) * 8 + x);
+      }
     }
     for (int dx in [-1, 1]) {
       int nx = x + dx, ny = y + dir;
@@ -117,7 +148,16 @@ class MoveGenerator {
 
   static List<int> _getKnightMoves(int x, int y, Side side, ChessBoard board) {
     List<int> moves = [];
-    final offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+    final offsets = [
+      [-2, -1],
+      [-2, 1],
+      [-1, -2],
+      [-1, 2],
+      [1, -2],
+      [1, 2],
+      [2, -1],
+      [2, 1],
+    ];
     for (var o in offsets) {
       int nx = x + o[0], ny = y + o[1];
       if (board.isOnBoard(nx, ny)) {

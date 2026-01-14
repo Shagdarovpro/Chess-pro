@@ -48,10 +48,8 @@ class ChessGamePage extends StatelessWidget {
     return BlocProvider(
       create: (_) => GameCubit(),
       child: BlocListener<GameCubit, GameState>(
-        listenWhen: (prev, curr) =>
-            prev.winner == null && curr.winner != null,
-        listener: (context, state) =>
-            _showWinDialog(context, state.winner!),
+        listenWhen: (prev, curr) => prev.winner == null && curr.winner != null,
+        listener: (context, state) => _showWinDialog(context, state.winner!),
         child: Scaffold(
           backgroundColor: const Color(0xFF262421),
           appBar: AppBar(
@@ -92,8 +90,7 @@ class _ChessBoardWidget extends StatelessWidget {
           ),
           child: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 8,
             ),
             itemCount: 64,
@@ -107,14 +104,13 @@ class _ChessBoardWidget extends StatelessWidget {
               final piece = state.board.squares[index];
 
               return GestureDetector(
-                onTap: () =>
-                    context.read<GameCubit>().onSquareTap(index),
+                onTap: () => context.read<GameCubit>().onSquareTap(index),
                 child: Container(
                   color: isSelected
                       ? Colors.yellow.withValues(alpha: 0.5)
                       : (isDark
-                          ? const Color(0xFF7D945D)
-                          : const Color(0xFFEEEED2)),
+                            ? const Color(0xFF7D945D)
+                            : const Color(0xFFEEEED2)),
                   child: Stack(
                     children: [
                       if (x == 0)
@@ -125,15 +121,12 @@ class _ChessBoardWidget extends StatelessWidget {
                         ),
                       if (y == 7)
                         _Coord(
-                          text:
-                              String.fromCharCode(97 + x),
+                          text: String.fromCharCode(97 + x),
                           align: Alignment.bottomRight,
                           isDark: isDark,
                         ),
                       if (piece != null)
-                        Center(
-                          child: _PieceWidget(piece: piece),
-                        ),
+                        Center(child: _PieceWidget(piece: piece)),
                       if (isValidMove)
                         Center(
                           child: Container(
@@ -142,10 +135,8 @@ class _ChessBoardWidget extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: piece == null
-                                  ? Colors.black
-                                      .withValues(alpha: 0.2)
-                                  : Colors.red
-                                      .withValues(alpha: 0.4),
+                                  ? Colors.black.withValues(alpha: 0.2)
+                                  : Colors.red.withValues(alpha: 0.4),
                             ),
                           ),
                         ),
@@ -189,12 +180,12 @@ class _PieceWidget extends StatelessWidget {
   String _unicode(PieceType type, Side side) {
     final w = side == Side.white;
     return switch (type) {
-      PieceType.pawn   => w ? '♙' : '♟',
+      PieceType.pawn => w ? '♙' : '♟',
       PieceType.knight => w ? '♘' : '♞',
       PieceType.bishop => w ? '♗' : '♝',
-      PieceType.rook   => w ? '♖' : '♜',
-      PieceType.queen  => w ? '♕' : '♛',
-      PieceType.king   => w ? '♔' : '♚',
+      PieceType.rook => w ? '♖' : '♜',
+      PieceType.queen => w ? '♕' : '♛',
+      PieceType.king => w ? '♔' : '♚',
     };
   }
 }
@@ -208,8 +199,7 @@ class _TurnIndicator extends StatelessWidget {
       builder: (context, state) {
         final isWhite = state.activeSide == Side.white;
         return Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           decoration: BoxDecoration(
             color: isWhite ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(25),
@@ -233,11 +223,7 @@ class _Coord extends StatelessWidget {
   final Alignment align;
   final bool isDark;
 
-  const _Coord({
-    required this.text,
-    required this.align,
-    required this.isDark,
-  });
+  const _Coord({required this.text, required this.align, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -261,13 +247,10 @@ class _ResetButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: () =>
-          context.read<GameCubit>().resetGame(),
+      onPressed: () => context.read<GameCubit>().resetGame(),
       icon: const Icon(Icons.refresh),
       label: const Text("Новая игра"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.brown[700],
-      ),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.brown[700]),
     );
   }
 }

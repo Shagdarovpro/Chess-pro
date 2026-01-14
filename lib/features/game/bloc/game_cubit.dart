@@ -14,15 +14,15 @@ class GameCubit extends Cubit<GameState> {
     if (state.winner != null) return;
 
     final clickedPiece = state.board.squares[index];
-    
+
     // 1. Выбор своей фигуры
     if (clickedPiece != null && clickedPiece.side == state.activeSide) {
       _selectPiece(index);
-    } 
+    }
     // 2. Попытка сделать ход выбранной фигурой
     else if (state.selectedIndex != null && state.validMoves.contains(index)) {
       _makeMove(state.selectedIndex!, index);
-    } 
+    }
     // 3. Сброс выделения при клике "мимо"
     else {
       _clearSelection();
@@ -33,20 +33,20 @@ class GameCubit extends Cubit<GameState> {
   void _selectPiece(int index) {
     // Получаем ходы, которые уже отфильтрованы MoveGenerator на наличие шаха
     final moves = MoveGenerator.getValidMoves(index, state.board);
-    
-    dev.log('Selected $index. Moves found: ${moves.length}', name: 'Chess.Cubit');
-    
-    emit(state.copyWith(
-      selectedIndex: index,
-      validMoves: moves,
-    ));
+
+    dev.log(
+      'Selected $index. Moves found: ${moves.length}',
+      name: 'Chess.Cubit',
+    );
+
+    emit(state.copyWith(selectedIndex: index, validMoves: moves));
   }
 
   /// Логика выполнения хода
   void _makeMove(int from, int to) {
     final List<ChessPiece?> newSquares = List.from(state.board.squares);
     final targetPiece = newSquares[to];
-    
+
     // Передвигаем фигуру в массиве
     newSquares[to] = newSquares[from];
     newSquares[from] = null;
@@ -57,19 +57,25 @@ class GameCubit extends Cubit<GameState> {
     dev.log('Move: $from to $to. Next turn: $nextSide', name: 'Chess.Cubit');
 
     // Обновляем состояние
-    emit(state.copyWith(
-      board: newBoard,
-      selectedIndex: null,
-      validMoves: [],
-      activeSide: nextSide,
-    ));
+    emit(
+      state.copyWith(
+        board: newBoard,
+        selectedIndex: null,
+        validMoves: [],
+        activeSide: nextSide,
+      ),
+    );
 
     // Проверяем, не привел ли этот ход к завершению игры
     _checkGameStatus(nextSide, newBoard, targetPiece);
   }
 
   /// Проверка на мат или взятие короля
-  void _checkGameStatus(Side nextSide, ChessBoard board, ChessPiece? capturedPiece) {
+  void _checkGameStatus(
+    Side nextSide,
+    ChessBoard board,
+    ChessPiece? capturedPiece,
+  ) {
     // 1. Если съеден король (упрощенный вариант победы)
     if (capturedPiece != null && capturedPiece.type == PieceType.king) {
       final winnerName = (nextSide == Side.white) ? "Черные" : "Белые";
@@ -104,21 +110,20 @@ class GameCubit extends Cubit<GameState> {
 
   /// Очистка выделения
   void _clearSelection() {
-    emit(state.copyWith(
-      selectedIndex: null,
-      validMoves: [],
-    ));
+    emit(state.copyWith(selectedIndex: null, validMoves: []));
   }
 
   /// Новая игра
   void resetGame() {
     dev.log('Restarting game...', name: 'Chess.Cubit');
-    emit(GameState(
-      board: ChessBoard.initial(),
-      activeSide: Side.white,
-      selectedIndex: null,
-      validMoves: [],
-      winner: null,
-    ));
+    emit(
+      GameState(
+        board: ChessBoard.initial(),
+        activeSide: Side.white,
+        selectedIndex: null,
+        validMoves: [],
+        winner: null,
+      ),
+    );
   }
 }

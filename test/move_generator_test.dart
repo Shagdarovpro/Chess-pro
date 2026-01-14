@@ -8,7 +8,7 @@ void main() {
       final board = ChessBoard.initial();
       // Индекс пешки e2 обычно 52 (зависит от твоей индексации)
       final moves = MoveGenerator.getValidMoves(52, board);
-      
+
       expect(moves.length, 2); // e3 и e4
     });
 
