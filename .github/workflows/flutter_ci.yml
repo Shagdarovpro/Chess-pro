@@ -1,0 +1,44 @@
+name: Flutter CI
+
+# Триггеры: запускать при пуше в основную ветку или при создании Pull Request
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    # Запускаем на последней версии Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Загружаем код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Настраиваем Flutter окружение
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          # Автоматически определяет версию из pubspec.yaml или использует последнюю stable
+          cache: true 
+
+      # 3. Загружаем зависимости
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Проверяем форматирование (Middle-разработчик всегда держит код чистым)
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # 5. Статический анализ кода (Линтер)
+      # Если в коде есть ошибки или критические предупреждения, сборка упадет
+      - name: Analyze project source
+        run: flutter analyze
+
+      # 6. Запуск Unit-тестов
+      # Это самый важный этап для подтверждения корректности логики ходов
+      - name: Run tests
+        run: flutter test

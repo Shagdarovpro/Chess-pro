@@ -1,30 +1,20 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:chess_middle/main.dart';
+import 'package:chess_middle/core/models/board.dart';
+import 'package:chess_middle/core/models/piece.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const ChessApp());
+  test('Начальная расстановка должна содержать 32 фигуры', () {
+    final board = ChessBoard.initial();
+    final piecesCount = board.squares.where((s) => s != null).length;
+    
+    expect(piecesCount, 32);
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('Белый король должен быть на своем месте (индекс 60)', () {
+    final board = ChessBoard.initial();
+    final piece = board.squares[60];
+    
+    expect(piece?.type, PieceType.king);
+    expect(piece?.side, Side.white);
   });
 }
